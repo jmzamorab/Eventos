@@ -60,4 +60,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    private static MainActivity current;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        current = this;
+    }
+
+    public static MainActivity getCurrentContext() {
+        return current;
+    }
 }
