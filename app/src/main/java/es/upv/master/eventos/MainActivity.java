@@ -11,7 +11,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.firebase.database.DatabaseReference;
 
-import org.example.eventos.R;
+import es.upv.master.eventos.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,3 +73,5 @@ public class MainActivity extends AppCompatActivity {
         return current;
     }
 }
+
+// Página 17, tienes que probar con el terminal y a partir de ahi continuar

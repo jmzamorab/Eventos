@@ -13,8 +13,8 @@ import android.widget.TextView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.DatabaseReference;
 
-import org.example.eventos.R;
-
+//import org.example.eventos.R;
+import es.upv.master.eventos.R;
 import java.io.InputStream;
 
 import butterknife.BindView;
