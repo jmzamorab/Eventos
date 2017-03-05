@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by padres on 02/03/2017.
  */
 
-public class Dialogo extends Activity {
+public class Dialogo extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

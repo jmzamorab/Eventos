@@ -1,9 +1,12 @@
 package es.upv.master.eventos;
 
-import android.support.v7.app.AppCompatActivity;
+//import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -17,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static es.upv.master.eventos.EventosAplicacion.PLAY_SERVICES_RESOLUTION_REQUEST;
+import static es.upv.master.eventos.EventosAplicacion.mostrarDialogo;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,6 +76,27 @@ public class MainActivity extends AppCompatActivity {
     public static MainActivity getCurrentContext() {
         return current;
     }
-}
 
-// Página 17, tienes que probar con el terminal y a partir de ahi continuar
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+      /*  if (getIntent().hasExtra("body")) {
+            mostrarDialogo(this, extras.getString("body"));
+            extras.remove("body");
+        }*/
+        Log.d("*** onResume MAIN", "LLegand datos");
+        if (extras != null && extras.keySet().size() > 4) {
+            String evento = "";
+            evento = "Evento: " + extras.getString("evento") + "\n";
+            evento = evento + "Día: " + extras.getString("dia") + "\n";
+            evento = evento + "Ciudad: " + extras.getString("ciudad") + "\n";
+            evento = evento + "Comentario: " + extras.getString("comentario");
+            mostrarDialogo(getApplicationContext(), evento);
+            for (String key : extras.keySet()) {
+                getIntent().removeExtra(key);
+            }
+            extras = null;
+        }
+    }
+}
