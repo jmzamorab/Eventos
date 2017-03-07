@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import static es.upv.master.eventos.EventosAplicacion.eliminarIdRegistro;
 import static es.upv.master.eventos.EventosAplicacion.guardarIdRegistro;
 import static es.upv.master.eventos.EventosAplicacion.mostrarDialogo;
 
@@ -76,6 +77,10 @@ public class Temas extends AppCompatActivity {
     private void mantenimientoSuscripcionesATemas(String tema, Boolean suscribir) {
         if (tema.equals("Todos")) {
             if (suscribir) {
+                //TODO
+                // Descomentar y probar, una vez se haya probado con esto cometnado.
+                // Ejercicio de pg 30 a 32, posterior al de las pg 28 a 30
+                // eliminarIdRegistro(getApplicationContext());
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
                 guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);
                 checkBoxDeportes.setChecked(false);
@@ -86,6 +91,14 @@ public class Temas extends AppCompatActivity {
             FirebaseMessaging.getInstance().subscribeToTopic(tema);
             guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);*/
             } else {
+                //TODO
+                // Descomentar y probar, una vez se haya probado con esto cometnado.
+                // Ejercicio de pg 30 a 32, posterior al de las pg 28 a 30
+                //if (tema.equals("Todos")) {
+                //    guardarIdRegistro(getApplicationContext(), FirebaseInstanceId.getInstance().getToken());
+                //}
+
+
                 /*mostrarDialogo(getApplicationContext(), "Te has dado de baja de: " + tema);
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
                 guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, false);*/
