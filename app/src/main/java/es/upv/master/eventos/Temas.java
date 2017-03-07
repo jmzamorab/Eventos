@@ -7,8 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import static es.upv.master.eventos.EventosAplicacion.guardarIdRegistro;
 import static es.upv.master.eventos.EventosAplicacion.mostrarDialogo;
 
 /**
@@ -20,6 +22,7 @@ public class Temas extends AppCompatActivity {
     CheckBox checkBoxTeatro;
     CheckBox checkBoxCine;
     CheckBox checkBoxFiestas;
+    CheckBox checkBoxNoRecibirNotificaciones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,17 +56,55 @@ public class Temas extends AppCompatActivity {
                 mantenimientoSuscripcionesATemas("Fiestas", isChecked);
             }
         });
+
+        checkBoxNoRecibirNotificaciones = (CheckBox) findViewById(R.id.checkBoxNoRecibirNotificaciones);
+        Boolean noRecibirNotificaciones = consultarSuscripcionATemaEnPreferencias(getApplicationContext(), "Todos");
+        checkBoxNoRecibirNotificaciones.setChecked(noRecibirNotificaciones);
+        checkBoxDeportes.setEnabled(!noRecibirNotificaciones);
+        checkBoxTeatro.setEnabled(!noRecibirNotificaciones);
+        checkBoxCine.setEnabled(!noRecibirNotificaciones);
+        checkBoxFiestas.setEnabled(!noRecibirNotificaciones);
+
+        checkBoxNoRecibirNotificaciones.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mantenimientoSuscripcionesATemas("Todos", isChecked);
+            }
+        });
+
     }
 
     private void mantenimientoSuscripcionesATemas(String tema, Boolean suscribir) {
-        if (suscribir) {
-            mostrarDialogo(getApplicationContext(), "Te has suscrito a: " + tema);
+        if (tema.equals("Todos")) {
+            if (suscribir) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
+                guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);
+                checkBoxDeportes.setChecked(false);
+                checkBoxTeatro.setChecked(false);
+                checkBoxCine.setChecked(false);
+                checkBoxFiestas.setChecked(false);
+            /*mostrarDialogo(getApplicationContext(), "Te has suscrito a: " + tema);
             FirebaseMessaging.getInstance().subscribeToTopic(tema);
-            guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);
+            guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);*/
+            } else {
+                /*mostrarDialogo(getApplicationContext(), "Te has dado de baja de: " + tema);
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
+                guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, false);*/
+                FirebaseMessaging.getInstance().subscribeToTopic(tema);
+                guardarIdRegistro(getApplicationContext(), FirebaseInstanceId.getInstance().getToken());
+                guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, false);
+            }
+            checkBoxDeportes.setEnabled(!suscribir);
+            checkBoxTeatro.setEnabled(!suscribir);
+            checkBoxCine.setEnabled(!suscribir);
+            checkBoxFiestas.setEnabled(!suscribir);
         } else {
-            mostrarDialogo(getApplicationContext(), "Te has dado de baja de: " + tema);
-            FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
-            guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, false);
+            if (suscribir) {
+                FirebaseMessaging.getInstance().subscribeToTopic(tema);
+                guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);
+            } else {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
+                guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, false);
+            }
         }
     }
 
