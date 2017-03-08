@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             mostrarDialogo(this, extras.getString("body"));
             extras.remove("body");
         }*/
-        Log.d("*** onResume MAIN", "LLegand datos");
+        Log.d("*** onResume MAIN", "LLegan datos");
         if (extras != null && extras.keySet().size() > 4) {
             String evento = "";
             evento = "Evento: " + extras.getString("evento") + "\n";
@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             evento = evento + "Ciudad: " + extras.getString("ciudad") + "\n";
             evento = evento + "Comentario: " + extras.getString("comentario");
             mostrarDialogo(getApplicationContext(), evento);
+
             for (String key : extras.keySet()) {
                 getIntent().removeExtra(key);
             }
