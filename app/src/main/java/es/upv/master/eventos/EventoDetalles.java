@@ -44,6 +44,7 @@ public class EventoDetalles extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         evento = extras.getString("evento");
         if (evento == null) evento = "";
+        Log.d("*** EventoDetalles ", "el extra que llega en evento es " + evento);
         registro = EventosAplicacion.getItemsReference().child(evento);
         registro.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -58,7 +59,7 @@ public class EventoDetalles extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError error) {
                 EventosAplicacion.mostrarDialogo(EventosAplicacion.getAppContext(),
-                        "Ha ocurrido un error al recuperar el registro.");
+                        "Ha ocurrido un error al recuperar el registro.", null);
             }
         });
     }

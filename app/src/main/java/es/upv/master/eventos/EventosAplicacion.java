@@ -46,11 +46,12 @@ public class EventosAplicacion extends Application {
         return eventosReference;
     }
 
-    static void mostrarDialogo(final Context context, final String mensaje) {
+    static void mostrarDialogo(final Context context, final String mensaje, final String idEvento) {
         Log.d("*** EventosAplicacion", "estoy en mostrarDialogo");
         Intent intent = new Intent(context, Dialogo.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("mensaje", mensaje);
+        intent.putExtra("evento", idEvento);
         context.startActivity(intent);
     }
 
