@@ -25,7 +25,7 @@ public class Dialogo extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     finish();
-                    if (getIntent().hasExtra("evento")) {
+                    if (getIntent().hasExtra("evento") && extras.getString("evento")!= null) {
                             Intent intent = new Intent(getApplicationContext(), EventoDetalles.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.putExtra("evento", extras.getString("evento"));
