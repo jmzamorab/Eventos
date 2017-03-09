@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -46,6 +47,7 @@ public class EventosAplicacion extends Application {
     }
 
     static void mostrarDialogo(final Context context, final String mensaje) {
+        Log.d("*** EventosAplicacion", "estoy en mostrarDialogo");
         Intent intent = new Intent(context, Dialogo.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("mensaje", mensaje);

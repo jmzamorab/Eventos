@@ -22,26 +22,34 @@ private Boolean lAdd = false;
         // if (remoteMessage.getNotification() != null) {
         //     mostrarDialogo(getApplicationContext(), remoteMessage.getNotification().getBody());
         // }
-        Log.d("*** EvtoFCM.onMessageReceive", "Antes de if, me llegan datos");
         if (remoteMessage.getData().size() > 0) {
 
-            Log.d("*** EvtoFCM.onMessageReceive", "Dentro de if, me llegan datos");
+            Log.d("*** EvtoFCM.onMessageReceive", "Dentro de if, me llegan datos ... ");
             if ((remoteMessage.getNotification() != null) && (remoteMessage.getNotification().getClickAction() != null))
             {
+                Log.d("*** EvtoFCM.onMessageReceive", "Además de datos, notificaciones ... ");
                 lAdd = true;
             }
             String evento = "";
             evento = "Evento: " + remoteMessage.getData().get("evento") + "\n";
-            if (!lAdd){
+            /*if (!lAdd){
             evento = evento + "Día: " + remoteMessage.getData().get("dia") + "\n";
             evento = evento + "Ciudad: " + remoteMessage.getData().get("ciudad") + "\n";
             evento = evento + "Comentario: " + remoteMessage.getData().get("comentario");}
-            mostrarDialogo(getApplicationContext(), evento);
+            mostrarDialogo(getApplicationContext(), evento);*/
             if (lAdd){
+                Log.d("*** EvtoFCM.onMessageReceive", "me han llegado las dos cosas, muestro eventoDetalle");
             Intent intent = new Intent(getApplicationContext(), EventoDetalles.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.putExtra("evento",  remoteMessage.getData().get("evento"));
             getApplicationContext().startActivity(intent);}
+            else{
+                evento = evento + "Día: " + remoteMessage.getData().get("dia") + "\n";
+                evento = evento + "Ciudad: " + remoteMessage.getData().get("ciudad") + "\n";
+                evento = evento + "Comentario: " + remoteMessage.getData().get("comentario");
+            }
+            Log.d("*** EvtoFCM.onMessageReceive", " y después muestro diálogo");
+            mostrarDialogo(getApplicationContext(), evento);
 
         } else {
             if (remoteMessage.getNotification() != null) {

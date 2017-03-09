@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class EventoDetalles extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.evento_detalles);
+        Log.d("*** EventoDetalles ", "posterior a setContentView");
         ButterKnife.bind(this);
         Bundle extras = getIntent().getExtras();
         evento = extras.getString("evento");
