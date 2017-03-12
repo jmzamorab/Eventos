@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Eventos</string>
+    <string name="send">Enviar evento</string>
+    <string name="text">Escriba Mensaje</string>
+    <string name="sendbutton">Enviar</string>
 </resources>

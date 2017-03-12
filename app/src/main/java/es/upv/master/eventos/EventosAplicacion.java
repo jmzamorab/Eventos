@@ -16,18 +16,29 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 /**
  * Created by padres on 28/02/2017.
  */
 
+//TODO
+// Si hay tiempo revisar
+// ejemplo en
+// https://poliformat.upv.es/portal/site/CFP_505_15903/page/72b57980-a497-48d4-b5e8-8dad243c5f9b
 public class EventosAplicacion extends Application {
     static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private String ITEMS_CHILD_NAME = "eventos";
     private static DatabaseReference eventosReference;
     private static Context context;
     static final String URL_SERVIDOR = "http://cursoandroid.hol.es/notificaciones/";
+    static final String URL_SERVIDOR_MIO = "http://toletor.hol.es/notificaciones/";
     static String ID_PROYECTO = "eventos-d4f6a";
     String idRegistro = "";
+
+    static String API_KEY = "AAAAaxywe7A:APA91bG54kXOUmDD2obse6rn-2IHaMnt5XUxBAeBCuUY12XO0qrCOxmj-4T_fxWY8SA5VHOx1RqKiavniaC5k8zMDADhOQ3x8sPtp6CgZ_VyZy74Ui_llJqlw32dLHuM3adujiAdq7D8";
+
 
     @Override
     public void onCreate() {
@@ -67,9 +78,13 @@ public class EventosAplicacion extends Application {
         @Override
         protected String doInBackground(Void... arg0) {
             try {
+                Log.d("*** Registrar dispositivo", "Dentro de Registrar dispositivo");
                 Uri.Builder constructorParametros = new Uri.Builder().appendQueryParameter("iddevice", idRegistroTarea).appendQueryParameter("idapp", ID_PROYECTO);
                 String parametros = constructorParametros.build().getEncodedQuery();
                 String url = URL_SERVIDOR + "registrar.php";
+                Log.d("*** Registrar dispositivo", "url " + url);
+                Log.d("*** Registrar dispositivo", "parámetros (1)... iddevice " + idRegistroTarea);
+                Log.d("*** Registrar dispositivo", "parámetros (2) ... idapp " + ID_PROYECTO);
                 URL direccion = new URL(url);
                 HttpURLConnection conexion = (HttpURLConnection) direccion.openConnection();
                 conexion.setRequestMethod("POST");
@@ -81,6 +96,7 @@ public class EventosAplicacion extends Application {
                 int respuesta = conexion.getResponseCode();
                 if (respuesta == 200) {
                     response = "ok";
+                    Log.d("*** Registrar dispositivo", "respuesta correcta  " + respuesta);
                 } else {
                     response = "error";
                 }
@@ -92,6 +108,7 @@ public class EventosAplicacion extends Application {
 
         public void onPostExecute(String res) {
             if (res == "ok") {
+                Log.d("*** Registrar dispositivo PostExecute ", "voy a guardar Id en  registroPreferencias " + idRegistroTarea);
                 guardarIdRegistroPreferencias(contexto, idRegistroTarea);
             }
         }

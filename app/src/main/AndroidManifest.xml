@@ -38,6 +38,10 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
+            android:name=".sendEvent"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
             android:name=".EventoDetalles"
             android:exported="true"
             android:label="@string/app_name"

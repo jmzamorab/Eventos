@@ -28,6 +28,13 @@ import butterknife.ButterKnife;
 import static es.upv.master.eventos.EventosAplicacion.PLAY_SERVICES_RESOLUTION_REQUEST;
 import static es.upv.master.eventos.EventosAplicacion.mostrarDialogo;
 
+/*TODO
+* AVISO USUA permisos, luego borrar. No de uno en uno
+* ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.GET_ACCOUNTS}, 1);
+*
+* */
+
+
 public class MainActivity extends AppCompatActivity {
 
     /*    @Override
@@ -129,6 +136,11 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_temas) {
             Intent intent = new Intent(getBaseContext(), Temas.class);
+            startActivity(intent);
+            return true;
+        }
+        if (id == R.id.action_send_evento) {
+            Intent intent = new Intent(getBaseContext(), sendEvent.class);
             startActivity(intent);
             return true;
         }
