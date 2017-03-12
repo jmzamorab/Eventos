@@ -27,9 +27,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
@@ -37,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,29 +99,30 @@ public class EventoDetalles extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
+private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    ImageView bmImage;
 
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mImagen = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mImagen = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return mImagen;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
+    public DownloadImageTask(ImageView bmImage) {
+        this.bmImage = bmImage;
     }
+
+    protected Bitmap doInBackground(String... urls) {
+        String urldisplay = urls[0];
+        Bitmap mImagen = null;
+        try {
+            InputStream in = new java.net.URL(urldisplay).openStream();
+            mImagen = BitmapFactory.decodeStream(in);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return mImagen;
+    }
+
+    protected void onPostExecute(Bitmap result) {
+        bmImage.setImageBitmap(result);
+    }
+
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -144,7 +148,8 @@ public class EventoDetalles extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
         Uri ficheroSeleccionado;
         Cursor cursor;
         String rutaImagen;
@@ -213,7 +218,7 @@ public class EventoDetalles extends AppCompatActivity {
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                   // @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    // @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     DatabaseReference myRef = EventosAplicacion.getItemsReference().child(evento);
                     DatabaseReference imagenRef = myRef.child("imagen");
 

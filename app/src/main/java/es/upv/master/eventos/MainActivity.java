@@ -18,9 +18,17 @@ import android.widget.Toast;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+
 import android.support.v4.app.ActivityCompat;
+
+import java.util.List;
 
 import es.upv.master.eventos.R;
 
@@ -38,7 +46,7 @@ import static es.upv.master.eventos.EventosAplicacion.mostrarDialogo;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    StorageReference mStorageRef;
     /*    @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -166,4 +174,43 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Si hay una subida en curso, guarda la referencia para consultarla posteriormente.
+        if (mStorageRef != null) {
+            outState.putString("reference", mStorageRef.toString());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Si hay una subida en progreso, obtiene su referencia y crea una nueva StorageReference
+        final String stringRef = savedInstanceState.getString("reference");
+        if (stringRef == null) {
+            return;
+        }
+        mStorageRef = FirebaseStorage.getInstance().getReferenceFromUrl(stringRef);
+        // Recupera todas las UploadTasks para la StorageReference guardada.
+        List tasks = mStorageRef.getActiveUploadTasks();
+        if (tasks.size() > 0) {
+            // Obtiene la tarea que monitoriza la subida.
+            UploadTask task = (UploadTask) tasks.get(0);
+            // Añade nuevos escuchadores a la tarea usando un ámbito de la actividad.
+            StorageTask storageTask = task.addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot state) {
+                    handleSuccess(state); //llama a una función que maneje el evento.
+                }
+
+                private void handleSuccess(UploadTask.TaskSnapshot state) {
+                    Toast.makeText(getApplicationContext(), "Exito " + state.getBytesTransferred() + " bytes subidos ", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+}
 }
