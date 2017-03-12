@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -35,7 +37,11 @@ public class EventosAplicacion extends Application {
     static final String URL_SERVIDOR = "http://cursoandroid.hol.es/notificaciones/";
     static final String URL_SERVIDOR_MIO = "http://toletor.hol.es/notificaciones/";
     static String ID_PROYECTO = "eventos-d4f6a";
+
     String idRegistro = "";
+    private FirebaseStorage storage;
+    private static StorageReference storageRef;
+    private final String urlStorageFirebase = "gs://eventos-d4f6a.appspot.com";
 
     static String API_KEY = "AAAAaxywe7A:APA91bG54kXOUmDD2obse6rn-2IHaMnt5XUxBAeBCuUY12XO0qrCOxmj-4T_fxWY8SA5VHOx1RqKiavniaC5k8zMDADhOQ3x8sPtp6CgZ_VyZy74Ui_llJqlw32dLHuM3adujiAdq7D8";
 
@@ -47,7 +53,12 @@ public class EventosAplicacion extends Application {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true);
         eventosReference = database.getReference(ITEMS_CHILD_NAME);
+        storage = FirebaseStorage.getInstance();
+        storageRef = storage.getReferenceFromUrl(urlStorageFirebase);
     }
+
+    public static StorageReference getStorageReference()
+      {return storageRef;}
 
     public static Context getAppContext() {
         return EventosAplicacion.context;
