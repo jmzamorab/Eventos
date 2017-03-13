@@ -2,6 +2,7 @@ package es.upv.master.eventos;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,6 +46,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static es.upv.master.eventos.EventosAplicacion.getItemsReference;
 
 /**
  * Created by padres on 07/03/2017.
@@ -78,7 +83,7 @@ public class EventoDetalles extends AppCompatActivity {
         evento = extras.getString("evento");
         if (evento == null) evento = "";
         Log.d("*** EventoDetalles ", "el extra que llega en evento es " + evento);
-        registro = EventosAplicacion.getItemsReference().child(evento);
+        registro = getItemsReference().child(evento);
         registro.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -143,9 +148,60 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             case R.id.action_putFile:
                 seleccionarFotografiaDispositivo(vista, SOLICITUD_SELECCION_PUTFILE);
                 break;
+            case R.id.action_deleteImage:
+                askBorrarImagen();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
+
+
+    private void askBorrarImagen() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Borrar Imagen");
+        alertDialog.setMessage("¿Está seguro que desea borrar la imagen?");
+        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SI", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+               borraImagen();
+            }
+        });
+        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+//                finish();
+            }
+        });
+        alertDialog.show();
+    }
+
+    private void borraImagen()
+    {
+
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://eventos-d4f6a.appspot.com");
+        StorageReference refImagen =  storageRef.child(evento);
+        Log.d("*** borraImagen" ,"Borrar Imagen de FB Storage");
+        refImagen.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("*** borraImagen" ,"Borrado de FB Storage CORRECTO, ahora vaciamos valor en BBDD");
+                DatabaseReference eventoBBDD = EventosAplicacion.getItemsReference().child(evento);
+                eventoBBDD.child("imagen").setValue("");
+                Log.d("*** borraImagen" ,"valor en BBDD limpio");
+                Toast.makeText(getApplicationContext(), "Imagen borrada con éxito " , Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d("*** borraImagen" ,"ERROR al borrar de FB Storage " + e.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(), "ERROR al borrar la imagen " , Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode,
@@ -208,18 +264,21 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
                 case SOLICITUD_SUBIR_PUTFILE:
                     Uri file = Uri.fromFile(new File(ficheroDispositivo));
                     uploadTask = imagenRef.putFile(file);
+                    //Uri sessionUri = uploadTask.getSnapshot().getUploadSessionUri();
+               //     EventosAplicacion.guardarUriPreferencias(getApplicationContext(), sessionUri.toString());
                     break;
             }
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     EventosAplicacion.mostrarDialogo(getApplicationContext(), "Ha ocurrido un error al subir la imagen.", null);
+
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     // @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    DatabaseReference myRef = EventosAplicacion.getItemsReference().child(evento);
+                    DatabaseReference myRef = getItemsReference().child(evento);
                     DatabaseReference imagenRef = myRef.child("imagen");
 
                     imagenRef.setValue(taskSnapshot.getDownloadUrl().toString());

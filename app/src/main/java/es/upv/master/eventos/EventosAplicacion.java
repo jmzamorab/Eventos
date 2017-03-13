@@ -13,11 +13,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static android.R.id.edit;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
@@ -131,6 +134,19 @@ public class EventosAplicacion extends Application {
         editor.putString("idRegistro", idRegistro);
         editor.commit();
     }
+
+    /*public static void guardarUriPreferencias(Context context, Uri uri) {
+        final SharedPreferences prefs = context.getSharedPreferences("Eventos", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("uri", String.valueOf(uri));
+        editor.commit();
+    }
+
+    public static String leerUriPreferencias(Context context)
+    {
+        final SharedPreferences prefs = context.getSharedPreferences("Eventos", Context.MODE_PRIVATE);
+        prefs.get
+    }*/
 
     public static String dameIdRegistroPreferencias(Context context) {
         final SharedPreferences preferencias = context.getSharedPreferences("Eventos", Context.MODE_PRIVATE);

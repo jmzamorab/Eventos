@@ -18,4 +18,9 @@
         android:orderInCategory="102"
         android:title="Subir Fichero"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_deleteImage"
+        android:orderInCategory="103"
+        android:title="Borrar Imagen"
+        app:showAsAction="never" />
 </menu>
