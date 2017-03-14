@@ -23,4 +23,9 @@
         android:orderInCategory="103"
         android:title="Borrar Imagen"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_fotografiasDrive"
+        android:orderInCategory="103"
+        android:title="Fotografias Drive"
+        app:showAsAction="never" />
 </menu>

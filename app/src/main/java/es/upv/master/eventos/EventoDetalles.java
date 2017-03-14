@@ -69,6 +69,7 @@ public class EventoDetalles extends AppCompatActivity {
     final int SOLICITUD_SUBIR_PUTFILE = 2;
     final int SOLICITUD_SELECCION_STREAM = 100;
     final int SOLICITUD_SELECCION_PUTFILE = 101;
+    final int SOLICITUD_FOTOGRAFIAS_DRIVE = 102;
     private ProgressDialog progresoSubida;
     Boolean subiendoDatos = false;
 
@@ -104,30 +105,30 @@ public class EventoDetalles extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
-private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-    ImageView bmImage;
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
 
-    public DownloadImageTask(ImageView bmImage) {
-        this.bmImage = bmImage;
-    }
-
-    protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
-        Bitmap mImagen = null;
-        try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
-            mImagen = BitmapFactory.decodeStream(in);
-        } catch (Exception e) {
-            e.printStackTrace();
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
         }
-        return mImagen;
-    }
 
-    protected void onPostExecute(Bitmap result) {
-        bmImage.setImageBitmap(result);
-    }
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mImagen = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mImagen = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mImagen;
+        }
 
-}
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -151,6 +152,11 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
             case R.id.action_deleteImage:
                 askBorrarImagen();
                 break;
+            case R.id.action_fotografiasDrive:
+                Intent intent = new Intent(getBaseContext(), FotografiasDrive.class);
+                intent.putExtra("evento", evento);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -163,7 +169,7 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "SI", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-               borraImagen();
+                borraImagen();
             }
         });
         alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "NO", new DialogInterface.OnClickListener() {
@@ -175,27 +181,26 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         alertDialog.show();
     }
 
-    private void borraImagen()
-    {
+    private void borraImagen() {
 
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://eventos-d4f6a.appspot.com");
-        StorageReference refImagen =  storageRef.child(evento);
-        Log.d("*** borraImagen" ,"Borrar Imagen de FB Storage");
+        StorageReference refImagen = storageRef.child(evento);
+        Log.d("*** borraImagen", "Borrar Imagen de FB Storage");
         refImagen.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d("*** borraImagen" ,"Borrado de FB Storage CORRECTO, ahora vaciamos valor en BBDD");
+                Log.d("*** borraImagen", "Borrado de FB Storage CORRECTO, ahora vaciamos valor en BBDD");
                 DatabaseReference eventoBBDD = EventosAplicacion.getItemsReference().child(evento);
                 eventoBBDD.child("imagen").setValue("");
-                Log.d("*** borraImagen" ,"valor en BBDD limpio");
-                Toast.makeText(getApplicationContext(), "Imagen borrada con éxito " , Toast.LENGTH_SHORT).show();
+                Log.d("*** borraImagen", "valor en BBDD limpio");
+                Toast.makeText(getApplicationContext(), "Imagen borrada con éxito ", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("*** borraImagen" ,"ERROR al borrar de FB Storage " + e.getLocalizedMessage());
-                Toast.makeText(getApplicationContext(), "ERROR al borrar la imagen " , Toast.LENGTH_SHORT).show();
+                Log.d("*** borraImagen", "ERROR al borrar de FB Storage " + e.getLocalizedMessage());
+                Toast.makeText(getApplicationContext(), "ERROR al borrar la imagen ", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -265,7 +270,7 @@ private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
                     Uri file = Uri.fromFile(new File(ficheroDispositivo));
                     uploadTask = imagenRef.putFile(file);
                     //Uri sessionUri = uploadTask.getSnapshot().getUploadSessionUri();
-               //     EventosAplicacion.guardarUriPreferencias(getApplicationContext(), sessionUri.toString());
+                    //     EventosAplicacion.guardarUriPreferencias(getApplicationContext(), sessionUri.toString());
                     break;
             }
             uploadTask.addOnFailureListener(new OnFailureListener() {

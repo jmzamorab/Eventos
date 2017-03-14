@@ -84,10 +84,7 @@ public class MainActivity extends AppCompatActivity {
             FirebaseMessaging.getInstance().subscribeToTopic("Todos");
         }
 
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]
-                {
-                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-                },1);
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA, android.Manifest.permission.GET_ACCOUNTS}, 1);
     }
 
     private boolean comprobarGooglePlayServices() {
@@ -162,13 +159,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(MainActivity.this, "Permiso denegado para mantener escribir en el almacenamiento.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+            case 3: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(MainActivity.this, "Permiso denegado para acceder a las cuentas", Toast.LENGTH_SHORT).show();
                 }
                 return;
             }
