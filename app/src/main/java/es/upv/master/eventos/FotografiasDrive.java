@@ -59,6 +59,19 @@ public class FotografiasDrive extends AppCompatActivity {
     private static Uri uriFichero;
     private String idCarpeta = "";
     private String idCarpetaEvento = "";
+    static final String CARPETA_COMPARTIDA = "0B_ClTUmmtxMgMGx5YnMyWUFpRVU";
+
+    public Boolean getCompartida() {
+        return compartida;
+    }
+
+    public void setCompartida(Boolean compartida) {
+        this.compartida = compartida;
+    }
+
+    private Boolean compartida = false;
+
+
 
 
     @Override
@@ -106,6 +119,15 @@ public class FotografiasDrive extends AppCompatActivity {
                 break;
             case R.id.action_galeria:
                 if (!noAutoriza) {
+                    Log.d("*** FotografiasDrive - Menú", "Seleccionar de Galeria ....");
+                    setCompartida(false);
+                    seleccionarFoto(vista);
+                }
+                break;
+            case R.id.action_galeria_compartida:
+                if (!noAutoriza) {
+                    Log.d("*** FotografiasDrive - Menú", "Seleccionar de Galeria para Carpeta Compartida....");
+                    setCompartida(true);
                     seleccionarFoto(vista);
                 }
                 break;
@@ -221,7 +243,6 @@ public class FotografiasDrive extends AppCompatActivity {
         }
     }
 
-
     public void seleccionarFoto(View v) {
         if (nombreCuenta == null) {
             mostrarMensaje(this, "Debes seleccionar una cuenta de Google Drive");
@@ -234,6 +255,9 @@ public class FotografiasDrive extends AppCompatActivity {
         }
     }
 
+    public void seleccionarFotoCompartida(View v){
+
+    }
 
     private void crearCarpetaEnDrive(final String nombreCarpeta, final String carpetaPadre) {
         Thread t = new Thread(new Runnable() {
@@ -297,7 +321,12 @@ public class FotografiasDrive extends AppCompatActivity {
                     File ficheroDrive = new File();
                     ficheroDrive.setName(ficheroJava.getName());
                     ficheroDrive.setMimeType("image/jpeg");
-                    ficheroDrive.setParents(Collections.singletonList(idCarpetaEvento));
+                    if (getCompartida().booleanValue() == true){
+                        Log.d("*** FotografiasDrive - guardarFicheroEnDrive", "Guardar en Carpeta Compartida...." + CARPETA_COMPARTIDA);
+                        ficheroDrive.setParents(Collections.singletonList(CARPETA_COMPARTIDA));}
+                    else{
+                        Log.d("*** FotografiasDrive - guardarFicheroEnDrive", "Guardar en Carpeta ...." + idCarpetaEvento);
+                        ficheroDrive.setParents(Collections.singletonList(idCarpetaEvento));}
                     File ficheroSubido = servicio.files().create(ficheroDrive, contenido).setFields("id").execute();
                     if (ficheroSubido.getId() != null) {
                         mostrarMensaje(FotografiasDrive.this, "¡Foto subida!");

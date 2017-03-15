@@ -12,4 +12,10 @@
         android:orderInCategory="101"
         android:title="Elegir imagen"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_galeria_compartida"
+        android:orderInCategory="101"
+        android:title="Compartir foto galería"
+        app:showAsAction="never" />
+
 </menu>
