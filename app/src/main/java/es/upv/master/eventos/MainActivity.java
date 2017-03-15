@@ -168,6 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
+            case 2: {
+                if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    Toast.makeText(MainActivity.this, "Permiso denegado para acceder a la camara", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
             case 3: {
                 if (!(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     Toast.makeText(MainActivity.this, "Permiso denegado para acceder a las cuentas", Toast.LENGTH_SHORT).show();
