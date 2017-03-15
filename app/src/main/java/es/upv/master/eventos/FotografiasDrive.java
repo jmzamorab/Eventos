@@ -3,8 +3,10 @@ package es.upv.master.eventos;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -29,6 +31,7 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -72,12 +75,12 @@ public class FotografiasDrive extends AppCompatActivity {
     private Boolean compartida = false;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fotografias_drive);
+        registerReceiver(mHandleMessageReceiver, new IntentFilter(DISPLAY_MESSAGE_ACTION));
+        mDisplay = (TextView) findViewById(R.id.display);
         Bundle extras = getIntent().getExtras();
         evento = extras.getString("evento");
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -96,9 +99,33 @@ public class FotografiasDrive extends AppCompatActivity {
                 servicio = obtenerServicioDrive(credencial);
                 if (idCarpetaEvento == null) {
                     crearCarpetaEnDrive(evento, idCarpeta);
+                } else {
+                    listarFicheros(this.findViewById(android.R.id.content));
                 }
             }
         }
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
+
+    private final BroadcastReceiver mHandleMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mDisplay.setText("");
+            String nuevoMensaje = intent.getExtras().getString("mensaje");
+            mDisplay.append(nuevoMensaje + "\n");
+        }
+    };
+
+    static void mostrarTexto(Context contexto, String mensaje) {
+        Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);
+        intent.putExtra("mensaje", mensaje);
+        contexto.sendBroadcast(intent);
     }
 
     @Override
@@ -255,7 +282,7 @@ public class FotografiasDrive extends AppCompatActivity {
         }
     }
 
-    public void seleccionarFotoCompartida(View v){
+    public void seleccionarFotoCompartida(View v) {
 
     }
 
@@ -321,15 +348,17 @@ public class FotografiasDrive extends AppCompatActivity {
                     File ficheroDrive = new File();
                     ficheroDrive.setName(ficheroJava.getName());
                     ficheroDrive.setMimeType("image/jpeg");
-                    if (getCompartida().booleanValue() == true){
+                    if (getCompartida().booleanValue() == true) {
                         Log.d("*** FotografiasDrive - guardarFicheroEnDrive", "Guardar en Carpeta Compartida...." + CARPETA_COMPARTIDA);
-                        ficheroDrive.setParents(Collections.singletonList(CARPETA_COMPARTIDA));}
-                    else{
+                        ficheroDrive.setParents(Collections.singletonList(CARPETA_COMPARTIDA));
+                    } else {
                         Log.d("*** FotografiasDrive - guardarFicheroEnDrive", "Guardar en Carpeta ...." + idCarpetaEvento);
-                        ficheroDrive.setParents(Collections.singletonList(idCarpetaEvento));}
+                        ficheroDrive.setParents(Collections.singletonList(idCarpetaEvento));
+                    }
                     File ficheroSubido = servicio.files().create(ficheroDrive, contenido).setFields("id").execute();
                     if (ficheroSubido.getId() != null) {
                         mostrarMensaje(FotografiasDrive.this, "¡Foto subida!");
+                        listarFicheros(view);
                     }
                     ocultarCarga(FotografiasDrive.this);
                 } catch (UserRecoverableAuthIOException e) {
@@ -344,5 +373,36 @@ public class FotografiasDrive extends AppCompatActivity {
         });
         t.start();
     }
+
+    public void listarFicheros(View v) {
+        if (nombreCuenta == null) {
+            mostrarMensaje(this, "Debes seleccionar una cuenta de Google Drive");
+        } else {
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mostrarCarga(FotografiasDrive.this, "Listando archivos...");
+                        FileList ficheros = servicio.files().list().setQ("'" + idCarpetaEvento + "' in parents").setFields("*").execute();
+                        for (File fichero : ficheros.getFiles()) {
+                            mostrarTexto(getBaseContext(), fichero.getOriginalFilename());
+                        }
+                        mostrarMensaje(FotografiasDrive.this, "¡Archivos listados!");
+                        ocultarCarga(FotografiasDrive.this);
+                    } catch (UserRecoverableAuthIOException e) {
+                        ocultarCarga(FotografiasDrive.this);
+                        startActivityForResult(e.getIntent(), SOLICITUD_AUTORIZACION);
+                    } catch (IOException e) {
+                        mostrarMensaje(FotografiasDrive.this, "Error;" + e.getMessage());
+                        ocultarCarga(FotografiasDrive.this);
+                        e.printStackTrace();
+                    }
+                }
+            });
+            t.start();
+        }
+    }
+
+
 }
 
