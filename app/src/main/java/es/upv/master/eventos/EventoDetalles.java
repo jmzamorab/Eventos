@@ -2,6 +2,7 @@ package es.upv.master.eventos;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnPausedListener;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
@@ -42,7 +43,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,6 +74,7 @@ public class EventoDetalles extends AppCompatActivity {
     Boolean subiendoDatos = false;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +104,8 @@ public class EventoDetalles extends AppCompatActivity {
         });
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -159,6 +162,7 @@ public class EventoDetalles extends AppCompatActivity {
                 break;
             case R.id.action_acercaDe:
                 Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
+                Log.d("**Evento Detalle", "evento => " + evento);
                 intentWeb.putExtra("evento", evento);
                 startActivity(intentWeb);
                 break;
@@ -316,5 +320,6 @@ public class EventoDetalles extends AppCompatActivity {
             EventosAplicacion.mostrarDialogo(getApplicationContext(), e.toString(), null);
         }
     }
+
 
 }

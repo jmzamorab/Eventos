@@ -1,5 +1,6 @@
 package es.upv.master.eventos;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.webkit.DownloadListener;
+import android.webkit.JavascriptInterface;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -30,6 +32,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static es.upv.master.eventos.R.layout.evento;
+
 /**
  * Created by padres on 19/03/2017.
  */
@@ -37,18 +41,23 @@ import java.net.URL;
 public class EventosWeb extends AppCompatActivity {
     private WebView navegador;
     private ProgressDialog dialogo;
+    private String evento;
+    final InterfazComunicacion miInterfazJava = new InterfazComunicacion(this);
 
+    @SuppressLint("JavascriptInterface")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("*** EevntosWeb", "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.eventos_web);
+        Bundle extras = getIntent().getExtras();
+        evento = extras.getString("evento");
         navegador = (WebView) findViewById(R.id.webkit);
         Log.d("*** EevntosWeb", "navegador");
         navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
-        navegador.loadUrl("https://eventos-d4f6a.firebaseapp.com/index.html");
-
+       // navegador.loadUrl("https://eventos-d4f6a.firebaseapp.com/index.html");
+        navegador.loadUrl("file:///android_asset/index.html");
         navegador.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -118,12 +127,14 @@ public class EventosWeb extends AppCompatActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 dialogo.dismiss();
+                navegador.loadUrl("javascript:muestraEvento(\""+evento+"\");");
             }
         });
 
         ActivityCompat.requestPermissions(EventosWeb.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
         ActivityCompat.requestPermissions(EventosWeb.this, new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE}, 2);
 
+        navegador.addJavascriptInterface(miInterfazJava, "jsInterfazNativa");
     }
 
     public void detenerCarga(View v) {
@@ -239,6 +250,19 @@ public class EventosWeb extends AppCompatActivity {
             builder.create().show();
         }
 
+    }
+
+    public class InterfazComunicacion {
+        Context mContext;
+
+        InterfazComunicacion(Context c) {
+            mContext = c;
+        }
+
+        @JavascriptInterface
+        public void volver() {
+            finish();
+        }
     }
 
 
