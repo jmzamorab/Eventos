@@ -6,23 +6,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import static android.R.id.edit;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 /**
  * Created by padres on 28/02/2017.
@@ -46,6 +45,10 @@ public class EventosAplicacion extends Application {
     private static StorageReference storageRef;
     private final String urlStorageFirebase = "gs://eventos-d4f6a.appspot.com";
 
+    static FirebaseRemoteConfig mFirebaseRemoteConfig;
+    static String colorFondo;
+    static Boolean acercaDe;
+
     static String API_KEY = "AAAAaxywe7A:APA91bG54kXOUmDD2obse6rn-2IHaMnt5XUxBAeBCuUY12XO0qrCOxmj-4T_fxWY8SA5VHOx1RqKiavniaC5k8zMDADhOQ3x8sPtp6CgZ_VyZy74Ui_llJqlw32dLHuM3adujiAdq7D8";
 
 
@@ -58,10 +61,39 @@ public class EventosAplicacion extends Application {
         eventosReference = database.getReference(ITEMS_CHILD_NAME);
         storage = FirebaseStorage.getInstance();
         storageRef = storage.getReferenceFromUrl(urlStorageFirebase);
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build();
+        boolean kk = configSettings.isDeveloperModeEnabled();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+        long cacheExpiration = 60;
+
+
+//expire the cache immediately for development mode.
+        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+            cacheExpiration = 0;
+        }
+
+        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                mFirebaseRemoteConfig.activateFetched();
+                getColorFondo();
+                getAcercaDe();
+                Log.d("** EVENTOSAPLICACION", "OnCreate -> dime AcercaDe FB => " + acercaDe);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                colorFondo = mFirebaseRemoteConfig.getString("color_fondo");
+                acercaDe = mFirebaseRemoteConfig.getBoolean("acerca_de");
+            }
+        });
     }
 
-    public static StorageReference getStorageReference()
-      {return storageRef;}
+    public static StorageReference getStorageReference() {
+        return storageRef;
+    }
 
     public static Context getAppContext() {
         return EventosAplicacion.context;
@@ -208,5 +240,15 @@ public class EventosAplicacion extends Application {
                 guardarIdRegistroPreferencias(contexto, "");
             }
         }
+    }
+
+    private void getColorFondo() {
+        Log.d("** EVENTOSAPLICACION", "valor de firebaseRemoteconfig ...." + mFirebaseRemoteConfig.getBoolean("color_fondo"));
+        colorFondo = mFirebaseRemoteConfig.getString("color_fondo");
+    }
+
+    private void getAcercaDe() {
+        Log.d("** EVENTOSAPLICACION", "valor de firebaseRemoteconfig ...." + mFirebaseRemoteConfig.getBoolean("acera_de"));
+        acercaDe = mFirebaseRemoteConfig.getBoolean("acerca_de");
     }
 }

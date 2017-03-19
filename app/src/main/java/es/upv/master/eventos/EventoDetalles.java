@@ -2,7 +2,6 @@ package es.upv.master.eventos;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -20,7 +19,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +45,7 @@ import java.io.InputStream;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static es.upv.master.eventos.EventosAplicacion.acercaDe;
 import static es.upv.master.eventos.EventosAplicacion.getItemsReference;
 
 /**
@@ -72,7 +71,6 @@ public class EventoDetalles extends AppCompatActivity {
     final int SOLICITUD_FOTOGRAFIAS_DRIVE = 102;
     private ProgressDialog progresoSubida;
     Boolean subiendoDatos = false;
-
 
 
     @Override
@@ -136,6 +134,9 @@ public class EventoDetalles extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_detalles, menu);
+        if (!acercaDe) {
+            menu.removeItem(R.id.action_acercaDe);
+        }
         return true;
     }
 

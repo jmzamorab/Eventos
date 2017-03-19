@@ -32,8 +32,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static es.upv.master.eventos.EventosAplicacion.mFirebaseRemoteConfig;
 import static es.upv.master.eventos.R.layout.evento;
-
+import static es.upv.master.eventos.EventosAplicacion.colorFondo;
 /**
  * Created by padres on 19/03/2017.
  */
@@ -43,6 +44,7 @@ public class EventosWeb extends AppCompatActivity {
     private ProgressDialog dialogo;
     private String evento;
     final InterfazComunicacion miInterfazJava = new InterfazComunicacion(this);
+
 
     @SuppressLint("JavascriptInterface")
     @Override
@@ -56,8 +58,10 @@ public class EventosWeb extends AppCompatActivity {
         Log.d("*** EevntosWeb", "navegador");
         navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
-       // navegador.loadUrl("https://eventos-d4f6a.firebaseapp.com/index.html");
-        navegador.loadUrl("file:///android_asset/index.html");
+        navegador.loadUrl("https://eventos-d4f6a.firebaseapp.com/index.html");
+        //
+        // navegador.loadUrl("file:///android_asset/index.html");
+
         navegador.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -128,6 +132,7 @@ public class EventosWeb extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 dialogo.dismiss();
                 navegador.loadUrl("javascript:muestraEvento(\""+evento+"\");");
+                navegador.loadUrl("javascript:colorFondo(\""+colorFondo+"\");");
             }
         });
 
@@ -135,6 +140,7 @@ public class EventosWeb extends AppCompatActivity {
         ActivityCompat.requestPermissions(EventosWeb.this, new String[]{android.Manifest.permission.ACCESS_NETWORK_STATE}, 2);
 
         navegador.addJavascriptInterface(miInterfazJava, "jsInterfazNativa");
+
     }
 
     public void detenerCarga(View v) {
