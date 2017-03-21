@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
+<!--<head>
     <meta name="viewport" content="user-scalable=no,width=device-width"/>
     <link rel="stylesheet"
           href=
@@ -9,19 +9,61 @@
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script
             src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+</head>-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="jquery.mobile-1.4.5.min.css"/>
+    <script src="jquery-1.11.3.min.js"></script>
+    <script>
+$(document).bind('mobileinit',function(){
+$.mobile.changePage.defaults.changeHash = false;
+$.mobile.hashListeningEnabled = false;
+$.mobile.pushStateEnabled = false;
+});
+
+    </script>
+    <script src="jquery.mobile-1.4.5.min.js"></script>
+    <link href="estilos.css" rel="stylesheet" type="text/css">
+    <script src="funciones.js"></script>
 </head>
 <body>
-<div data-role="page">
+<div data-role="page" data-theme="b" id="pagina1">
+    <div data-role="header">
+        <a href="#" data-icon="home" onClick="volver();">Inicio</a>
+        <h1 id="evento"></h1>
+        <a href="#pagina2" data-role="button" data-icon="info"
+           data-transition="popup">+ Info</a>
+    </div>
+    <div data-role="content">
+        <p id="wiki"><p>
+    </div>
+    <div data-role="footer" data-position="fixed">
+        <h1>DEU UPV</h1>
+    </div>
+</div>
+<div data-role="panel" data-theme="b" id="pagina2">
+    <h3>Info</h3>
+    <p>Curso DEU UPV</p>
+    <p>Master UPV</p>
+    <p>Curso Firebase UPV</p>
+    <a href="#pagina1" data-role="button" data-icon="back"
+       data-transition="overlay" >Volver</a>
+</div>
+</body>
+<!--<body>
+<div data-role="page" data-theme="b">
     <h1>Fotograf&iacute;as Drive</h1>
     <div data-role="content">
         <ul id="lista" data-role="listview" data-inset="true"></ul>
     </div>
     <form>
         <label for="slider-0">Valora de 0 a 100:</label>
-        <input type="range" name="slider" id="slider-0"  value="50" min="0" max="100"/>
+        <input type="range" name="slider" id="slider-0" value="50" min="0" max="100"/>
     </form>
+    <a href="http://www.androidcurso.com" data-role="button" data-icon="star"> Curso Android</a>
 
 </div>
 
-</body>
+</body>-->
 </html>
