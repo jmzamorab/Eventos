@@ -8,7 +8,7 @@ wiki="El carnaval es una celebración que tiene lugar inmediatamente antes del i
 break;
 case "fallas":
 evento="Fallas";
-wiki = "Las Fallas (Falles en valenciano) son unas fiestas que van del 15 al 19 de marzo con una tradición arraigada en la ciudad de Valencia y diferentes poblaciones de la Comunidad Valenciana. Oficialmente empiezan el último domingo de febrero con el acto de la Crida.";
+wiki = "Las Fallas (Falles en valenciano) son unas fiestas que van del 15 al 19 de marzo con una tradición arraigada en la ciudad de Valencia y diferentes poblaciones de la Comunidad Valenciana. Oficialmente empiezan el último domingo de febrero con el acto de la Crida. Si contrata ahora asistencia, tiene  25&#37; de descuento";
 break;
 case "nochevieja":
 evento="Nochevieja";

@@ -84,6 +84,9 @@ public class EventoDetalles extends AppCompatActivity {
         if (evento == null) {
             android.net.Uri url = getIntent().getData();
             evento = url.getQueryParameter("evento");
+            if (evento==null) evento = "";
+        //}
+            showWeb();
         }
         Log.d("*** EventoDetalles ", "el extra que llega en evento es " + evento);
         registro = getItemsReference().child(evento);
@@ -169,13 +172,21 @@ public class EventoDetalles extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.action_acercaDe:
-                Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
+                /*Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
                 Log.d("**Evento Detalle", "evento => " + evento);
                 intentWeb.putExtra("evento", evento);
-                startActivity(intentWeb);
+                startActivity(intentWeb);*/
+                showWeb();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showWeb(){
+        Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
+        Log.d("**Evento Detalle", "evento => " + evento);
+        intentWeb.putExtra("evento", evento);
+        startActivity(intentWeb);
     }
 
 
